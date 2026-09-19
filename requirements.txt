@@ -1,0 +1,15 @@
+# 异步基础
+aiohttp>=3.9.0          # 异步HTTP请求，替代requests，学习async必备
+aiofiles>=23.2.0        # 异步文件读写
+
+# FastAPI核心
+fastapi>=0.110.0
+uvicorn[standard]>=0.29.0 # ASGI服务器，用来跑FastAPI
+
+# 异步数据库（学习用，可选，后面学数据库再用）
+asyncpg>=0.29.0         # postgres异步驱动
+aiomysql>=0.2.0         # mysql异步驱动
+
+# 辅助工具
+pydantic-settings>=2.2.0 # 配置管理
+httpx>=0.27.0           # 同步+异步客户端，测试接口非常好用

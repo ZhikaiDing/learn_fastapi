@@ -1,0 +1,12 @@
+# 你需要学会
+- 基础概念
+  - 程序中的资源：cpu/存储(内存、磁盘、网络)
+  - 进程，线程，协程
+  - 同步/异步；并行/并发；单核/多核；阻塞
+- 理解
+  - async | 协程 | 异步 | 并发
+  - async 适用于: 包含高 IO耗时 的任务 (网络请求、数据库读写、文件读写)
+- async 语法
+  - async, await
+  - asyncio.create_task(), asyncio.gather()
+  - asyncio.run()
