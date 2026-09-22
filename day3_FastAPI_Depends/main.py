@@ -54,7 +54,6 @@ class SearchReq(BaseModel):
     # 如果直接写 modes = ["<data>"], 可能会有共享默认数据的风险
     #   假设真的共享了默认数据，而某个函数有“修改”了这个数据，则会污染后面所用使用默认数据的请求
     # 当然，实际上 Pydantic v2 在实例化时会复制可变的默认值，比较安全
-    #   不过还是推荐用 Field 的 default_factory, 显式表示：在每次使用时生成新的默认值
 
 def get_db_session() -> Generator[FakeDB, None, None]:
     db_session = FakeDB()
