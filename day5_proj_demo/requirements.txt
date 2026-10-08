@@ -13,6 +13,10 @@ aiomysql>=0.2.0         # mysql异步驱动
 # 数据库相关
 sqlalchemy>=2.1.1
 
+# JWT 认证相关
+python-jose>=3.5.0
+passlib>=1.7.4
+
 # 辅助工具
 pydantic-settings>=2.2.0 # 配置管理
 httpx>=0.27.0           # 同步+异步客户端，测试接口非常好用
