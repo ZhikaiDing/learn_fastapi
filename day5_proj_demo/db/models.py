@@ -28,7 +28,7 @@ class UserModelConfig(Base):
     config_name = Column(String, nullable=False)
     model_type = Column(String, nullable=False)
     model_name = Column(String, nullable=False)
-    model_api_key = Column(String, nullable=False)
+    hashed_model_api_key = Column(String, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
     owner = relationship("User", back_populates="model_configs")

@@ -3,10 +3,12 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel
 from fastapi import HTTPException, status
+from cryptography.fernet import Fernet
+from sqlalchemy.ext.asyncio import AsyncSession
 
 # 从settings读取配置，后面core/settings.py会读取.env
 from core.settings import settings
-from api.deps_base import DbSession, JWTtoken
+from api.deps_base import JWTtoken
 from db.crud.user import get_user_by_id
 
 # bcrypt密码哈希上下文
@@ -46,7 +48,7 @@ def create_access_token(
     return encoded_jwt
 
 async def get_current_user(
-    db: DbSession,
+    db: AsyncSession,
     token: JWTtoken
 ):
     credentials_exception = HTTPException(
@@ -66,7 +68,25 @@ async def get_current_user(
     except JWTError:
         raise credentials_exception
     
-    user = get_user_by_id(db, user_id=int(user_id))
+    user = await get_user_by_id(db, user_id=int(user_id))
     if user is None:
         raise credentials_exception
     return user
+
+#%% api key 加密
+# .env里保存 ENCRYPT_KEY
+fernet = Fernet(settings.ENCRYPT_KEY.encode())
+
+def encrypt_api_key(plain_key: str) -> str:
+    """加密api key，存入数据库"""
+    return fernet.encrypt(plain_key.encode("utf-8")).decode("utf-8")
+
+def decrypt_api_key(cipher_key: str) -> str:
+    """读取数据库密文，解密得到原始api key"""
+    return fernet.decrypt(cipher_key.encode("utf-8")).decode("utf-8")
+
+# 工具函数：apikey掩码，例如 sk-xxxx...abcd
+def mask_api_key(raw_key: str) -> str:
+    if len(raw_key) <= 8:
+        return raw_key
+    return raw_key[:4] + "******" + raw_key[-4:]

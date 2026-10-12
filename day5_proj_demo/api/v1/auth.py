@@ -1,5 +1,5 @@
 from datetime import timedelta
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, HTTPException, status
 
 from db.crud.user import get_user_by_email, create_user
 from schemas.user_schema import UserRegister, UserLogin, TokenResponse
@@ -11,21 +11,21 @@ from api.deps import CurUser
 router = APIRouter(tags=["认证"], prefix="/auth")
 
 @router.post("/register", status_code=status.HTTP_201_CREATED)
-def register(
+async def register(
     *,
     user_in: UserRegister,
     db: DbSession
 ):
     """用户注册接口 POST /api/v1/auth/register"""
     # 检查邮箱是否已经存在
-    db_user = get_user_by_email(db, email=user_in.email)
+    db_user = await get_user_by_email(db, email=user_in.email)
     if db_user:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="该邮箱已被注册"
         )
     # 创建新用户
-    new_user = create_user(db, obj_in=user_in)
+    new_user = await create_user(db, obj_in=user_in)
     return {
         "msg": "注册成功",
         "user_id": new_user.id,
@@ -34,7 +34,7 @@ def register(
 
 
 @router.post("/login", response_model=TokenResponse)
-def login(
+async def login(
     login_in: UserLogin,
     db: DbSession,
     # form_data: LoginData
@@ -45,7 +45,7 @@ def login(
     返回 access_token
     """
     # 这里OAuth2的表单字段叫username，我们用来存用户邮箱
-    user = get_user_by_email(db, email=login_in.email) # email=form_data.username
+    user = await get_user_by_email(db, email=login_in.email) # email=form_data.username
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -73,8 +73,4 @@ def login(
 @router.get("/me")
 async def read_user_info(current_user: CurUser):
     # 只要进到这个函数，说明用户已经登录成功
-    return {
-        "id": current_user.id,
-        "email": current_user.email,
-        "username": current_user.username
-    }
+    return current_user

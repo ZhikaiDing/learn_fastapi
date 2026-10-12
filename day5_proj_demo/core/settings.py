@@ -12,6 +12,8 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 15
 
+    ENCRYPT_KEY:str
+
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf8")
 
 settings = Settings()
